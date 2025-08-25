@@ -1,0 +1,38 @@
+{
+  "name": "sistema-referidos-directus",
+  "version": "1.0.0",
+  "description": "Sistema de gestión de socios y fundadores con Directus CMS",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "npx http-server -p 8000 -c-1",
+    "build": "echo 'No build process needed for static files'",
+    "deploy": "echo 'Ready for deployment'"
+  },
+  "keywords": [
+    "directus",
+    "webapp",
+    "referidos",
+    "socios",
+    "fundadores",
+    "cms"
+  ],
+  "author": "Luis Pinta",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luispinta/sistema-referidos-directus.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

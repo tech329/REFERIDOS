@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Referidos - Directus</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Pantalla de Login -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1><i class="fas fa-users"></i> Sistema de Referidos</h1>
+                <p>Gestión de Socios y Fundadores</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i>
+                        Correo Electrónico
+                    </label>
+                    <input type="email" id="email" name="email" required placeholder="usuario@ejemplo.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i>
+                        Contraseña
+                    </label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Iniciar Sesión
+                </button>
+                <div id="loginError" class="error-message"></div>
+                <div id="loginLoading" class="loading-message">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Iniciando sesión...
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Aplicación Principal -->
+    <div id="appScreen" class="app-container hidden">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1><i class="fas fa-users"></i> Sistema de Referidos</h1>
+                <div class="header-actions">
+                    <span id="userInfo" class="user-info">
+                        <i class="fas fa-user"></i>
+                        <span id="userName">Usuario</span>
+                    </span>
+                    <button id="logoutBtn" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navegación -->
+        <nav class="app-nav">
+            <div class="nav-content">
+                <button id="dashboardBtn" class="nav-btn active">
+                    <i class="fas fa-chart-dashboard"></i>
+                    Dashboard
+                </button>
+                <button id="foundersBtn" class="nav-btn">
+                    <i class="fas fa-folder"></i>
+                    Fundadores
+                </button>
+            </div>
+        </nav>
+
+        <!-- Dashboard -->
+        <div id="dashboardView" class="view">
+            <div class="dashboard-container">
+                <h2><i class="fas fa-chart-line"></i> Dashboard de Socios</h2>
+                
+                <!-- Estadísticas Generales -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalSocios">0</h3>
+                            <p>Socios Totales</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="totalFundadores">0</h3>
+                            <p>Fundadores</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="sociosCompletos">0</h3>
+                            <p>Procesos Completos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card clickable" id="pendientesCard">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="sociosPendientes">0</h3>
+                            <p>Procesos Pendientes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estadísticas por Fundador -->
+                <div class="founders-stats">
+                    <h3><i class="fas fa-chart-bar"></i> Socios por Fundador</h3>
+                    <div id="foundersStatsContainer" class="founders-stats-grid">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vista de Fundadores -->
+        <div id="foundersView" class="view hidden">
+            <div class="founders-container">
+                <h2><i class="fas fa-folder"></i> Carpetas de Fundadores</h2>
+                <div id="foundersGrid" class="founders-grid">
+                    <!-- Se llenará dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Ver/Editar Socios -->
+        <div id="sociosModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">
+                        <i class="fas fa-users"></i>
+                        Socios de <span id="modalFounderName"></span>
+                    </h3>
+                    <button id="closeModal" class="close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div id="sociosContainer" class="socios-container">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                    
+                    <div id="addSocioContainer" class="add-socio-container hidden">
+                        <button id="addSocioBtn" class="add-socio-btn">
+                            <i class="fas fa-plus"></i>
+                            Añadir Nuevo Socio
+                        </button>
+                    </div>
+                    
+                    <div id="completedMessage" class="completed-message hidden">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Fundador Completado (5/5 Socios)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Añadir/Editar Socio -->
+        <div id="editSocioModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="editModalTitle">
+                        <i class="fas fa-user-edit"></i>
+                        <span id="editModalTitleText">Añadir Nuevo Socio</span>
+                    </h3>
+                    <button id="closeEditModal" class="close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <form id="socioForm" class="socio-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="socioNombre">
+                                    <i class="fas fa-user"></i>
+                                    Nombre Completo
+                                </label>
+                                <input type="text" id="socioNombre" name="nombre" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="socioCedula">
+                                    <i class="fas fa-id-card"></i>
+                                    Cédula
+                                </label>
+                                <input type="text" id="socioCedula" name="cedula" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="socioDireccion">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Dirección
+                            </label>
+                            <input type="text" id="socioDireccion" name="direccion" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="socioTelefono">
+                                    <i class="fas fa-phone"></i>
+                                    Teléfono
+                                </label>
+                                <input type="text" id="socioTelefono" name="telefono" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="socioCompleto">
+                                    <i class="fas fa-check-circle"></i>
+                                    Estado del Proceso
+                                </label>
+                                <select id="socioCompleto" name="completo" required>
+                                    <option value="No">No Completo</option>
+                                    <option value="Sí">Completo</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <input type="hidden" id="socioFundador" name="fundador">
+                        <input type="hidden" id="socioId" name="id">
+                        
+                        <div class="form-actions">
+                            <button type="button" id="cancelSocioBtn" class="cancel-btn">
+                                <i class="fas fa-times"></i>
+                                Cancelar
+                            </button>
+                            <button type="submit" id="saveSocioBtn" class="save-btn">
+                                <i class="fas fa-save"></i>
+                                Guardar Socio
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para Procesos Pendientes -->
+        <div id="pendientesModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>
+                        <i class="fas fa-clock"></i>
+                        Procesos Pendientes
+                    </h3>
+                    <button id="closePendientesModal" class="close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="pendientes-info">
+                        <p><i class="fas fa-info-circle"></i> Estos socios tienen procesos de inscripción pendientes de completar.</p>
+                    </div>
+                    
+                    <div id="pendientesContainer" class="pendientes-container">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                    
+                    <div id="noPendientesMessage" class="no-pendientes-message hidden">
+                        <i class="fas fa-check-circle"></i>
+                        <span>¡Excelente! No hay procesos pendientes.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay hidden">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Cargando datos...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="debug.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
